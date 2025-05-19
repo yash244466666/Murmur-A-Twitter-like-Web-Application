@@ -1,0 +1,131 @@
+require 'swagger_helper'
+
+RSpec.describe 'Murmurs API', type: :request, swagger_doc: 'v1/swagger.yaml' do
+  let(:user) { create(:user) }
+  let(:token) { auth_tokens_for_user(user) }
+  let!(:murmurs) { create_list(:murmur, 3, user: user) }
+  path '/api/murmurs' do
+    get 'Retrieves all murmurs' do
+      tags 'Murmurs'
+      produces 'application/json'
+      security [bearerAuth: []]
+
+      response '200', 'murmurs found' do
+        schema type: :object,
+          properties: {
+            murmurs: {
+              type: :array,
+              items: {
+                type: :object,
+                properties: {
+                  id: { type: :integer },
+                  content: { type: :string },
+                  created_at: { type: :string, format: 'date-time' },
+                  user: {
+                    type: :object,
+                    properties: {
+                      id: { type: :integer },
+                      username: { type: :string },
+                      bio: { type: :string }
+                    }
+                  },
+                  likes_count: { type: :integer },
+                  liked_by_current_user: { type: :boolean }
+                }
+              }
+            }
+          }
+        run_test!
+      end
+
+      response '401', 'unauthorized' do
+        schema type: :object,
+          properties: {
+            error: { type: :string }
+          }
+        run_test!
+      end
+    end
+
+    post 'Creates a murmur' do
+      tags 'Murmurs'
+      consumes 'application/json'
+      produces 'application/json'
+      security [bearerAuth: []]
+      parameter name: :murmur_params, in: :body, schema: {
+        type: :object,
+        properties: {
+          content: { type: :string, example: 'This is my first murmur!' }
+        },
+        required: ['content']
+      }
+
+      response '201', 'murmur created' do
+        schema type: :object,
+          properties: {
+            id: { type: :integer },
+            content: { type: :string },
+            created_at: { type: :string, format: 'date-time' },
+            user: {
+              type: :object,
+              properties: {
+                id: { type: :integer },
+                username: { type: :string },
+                bio: { type: :string }
+              }
+            },
+            likes_count: { type: :integer },
+            liked_by_current_user: { type: :boolean }
+          }
+        run_test!
+      end
+
+      response '422', 'invalid request' do
+        schema type: :object,
+          properties: {
+            errors: {
+              type: :array,
+              items: { type: :string }
+            }
+          }
+        run_test!
+      end
+    end
+  end
+
+  path '/api/timeline' do
+    get 'Retrieves user timeline' do
+      tags 'Murmurs'
+      produces 'application/json'
+      security [bearerAuth: []]
+
+      response '200', 'timeline retrieved' do
+        schema type: :object,
+          properties: {
+            murmurs: {
+              type: :array,
+              items: {
+                type: :object,
+                properties: {
+                  id: { type: :integer },
+                  content: { type: :string },
+                  created_at: { type: :string, format: 'date-time' },
+                  user: {
+                    type: :object,
+                    properties: {
+                      id: { type: :integer },
+                      username: { type: :string },
+                      bio: { type: :string }
+                    }
+                  },
+                  likes_count: { type: :integer },
+                  liked_by_current_user: { type: :boolean }
+                }
+              }
+            }
+          }
+        run_test!
+      end
+    end
+  end
+end
