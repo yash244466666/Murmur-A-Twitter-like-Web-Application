@@ -5,4 +5,9 @@ module.exports = {
     './app/assets/stylesheets/**/*.css',
     './app/javascript/**/*.js',
   ],
+  important: true,
+  theme: {
+    extend: {},
+  },
+  plugins: [],
 };
