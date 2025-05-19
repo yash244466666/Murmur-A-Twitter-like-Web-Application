@@ -40,9 +40,16 @@ module Ti
     # config.time_zone = "Central Time (US & Canada)"
     # config.eager_load_paths << Rails.root.join("extras")
 
-    # Only loads a smaller set of middleware suitable for API only apps.
-    # Middleware like session, flash, cookies can be added back manually.
-    # Skip views, helpers and assets when generating a new resource.
-    config.api_only = true
+    # Enable full stack middleware
+    config.api_only = false
+    
+    # Enable session middleware
+    config.session_store :cookie_store
+    config.middleware.use ActionDispatch::Cookies
+    config.middleware.use config.session_store, config.session_options
+    
+    # Enable asset pipeline
+    config.assets.enabled = true
+    config.assets.version = '1.0'
   end
 end

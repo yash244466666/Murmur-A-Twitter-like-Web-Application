@@ -1,0 +1,89 @@
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+  <!-- Left Sidebar -->
+  <div class="lg:col-span-1">
+    <div class="bg-white rounded-lg shadow p-6 sticky top-4">
+      <h2 class="text-xl font-bold mb-4">Your Profile</h2>
+      <div class="space-y-2">
+        <p><strong>@<%= current_user.username %></strong></p>
+        <p><%= pluralize(current_user.followers.count, 'Follower') %></p>
+        <p>Following <%= current_user.following.count %></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="lg:col-span-2">
+    <!-- New Murmur Form -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+      <%= form_with(model: Murmur.new, local: true, class: "space-y-4") do |f| %>
+        <div>
+          <%= f.text_area :content, 
+              placeholder: "What's happening?",
+              class: "w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500",
+              maxlength: 280 %>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-sm text-gray-500" id="char-count">280 characters remaining</span>
+          <%= f.submit "Murmur", class: "bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600" %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Timeline -->
+    <div id="timeline" class="space-y-4">
+      <%= render partial: "murmurs/murmur", collection: @murmurs %>
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-4">
+      <%= paginate @murmurs %>
+    </div>
+  </div>
+
+  <!-- Right Sidebar -->
+  <div class="lg:col-span-1">
+    <div class="bg-white rounded-lg shadow p-6 sticky top-4">
+      <h2 class="text-xl font-bold mb-4">Who to Follow</h2>
+      <div class="space-y-4">
+        <% @suggested_users&.each do |user| %>
+          <div class="flex items-center justify-between">
+            <%= link_to profile_path(username: user.username), class: "flex items-center space-x-2" do %>
+              <div>
+                <p class="font-bold">@<%= user.username %></p>
+              </div>
+            <% end %>
+            
+            <% if current_user.following?(user) %>
+              <%= button_to follow_path(id: user.id), 
+                  method: :delete,
+                  class: "bg-blue-500 text-white px-4 py-1 rounded-full hover:bg-blue-600" do %>
+                Following
+              <% end %>
+            <% else %>
+              <%= form_with url: follows_path, method: :post, class: "inline" do %>
+                <%= hidden_field_tag :followed_id, user.id %>
+                <%= button_tag "Follow", 
+                    type: "submit",
+                    class: "border border-blue-500 text-blue-500 px-4 py-1 rounded-full hover:bg-blue-50" %>
+              <% end %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :page_scripts do %>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const textarea = document.querySelector('textarea[name="murmur[content]"]');
+      const charCount = document.querySelector('#char-count');
+      
+      textarea.addEventListener('input', function() {
+        const remaining = 280 - this.value.length;
+        charCount.textContent = `${remaining} characters remaining`;
+      });
+    });
+  </script>
+<% end %>

@@ -1,0 +1,57 @@
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+  <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+    <!-- Left Sidebar - User Profile -->
+    <div class="lg:col-span-1">
+      <div class="bg-white rounded-lg shadow p-6 sticky top-4">
+        <div class="text-center">
+          <h1 class="text-2xl font-bold mb-2">@<%= @user.username %></h1>
+          <% if @user.bio.present? %>
+            <p class="text-gray-600 mb-4"><%= @user.bio %></p>
+          <% end %>
+          
+          <div class="flex justify-center space-x-4 text-sm text-gray-500">
+            <div>
+              <div class="font-bold text-gray-900"><%= @user.murmurs.count %></div>
+              <div>Murmurs</div>
+            </div>
+            <div>
+              <div class="font-bold text-gray-900"><%= @user.followers.count %></div>
+              <div>Followers</div>
+            </div>
+            <div>
+              <div class="font-bold text-gray-900"><%= @user.following.count %></div>
+              <div>Following</div>
+            </div>
+          </div>
+
+          <% if current_user && current_user != @user %>
+            <div class="mt-4">
+              <% if current_user.following?(@user) %>
+                <%= button_to follow_path(id: @user.id), 
+                    method: :delete,
+                    class: "w-full btn-secondary" do %>
+                  Unfollow
+                <% end %>
+              <% else %>
+                <%= form_with url: follows_path, method: :post, class: "w-full" do %>
+                  <%= hidden_field_tag :followed_id, @user.id %>
+                  <%= button_tag "Follow", 
+                      type: "submit",
+                      class: "w-full btn-primary" %>
+                <% end %>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content - Murmurs -->
+    <div class="lg:col-span-3">
+      <!-- Murmurs List -->
+      <div class="space-y-4">
+        <%= render partial: "murmurs/murmur", collection: @user.murmurs.order(created_at: :desc) %>
+      </div>
+    </div>
+  </div>
+</div>

@@ -7,4 +7,8 @@ class Murmur < ApplicationRecord
   validates :user_id, presence: true
 
   default_scope -> { order(created_at: :desc) }
+
+  def likes_count
+    likes.count
+  end
 end

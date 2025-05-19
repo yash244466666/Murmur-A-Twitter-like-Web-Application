@@ -34,5 +34,7 @@
 .github/
 .vscode/
 tmp/
-.node_modules/
+node_modules/
 vendor/
+/app/assets/builds/*
+!/app/assets/builds/.keep

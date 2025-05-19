@@ -4,6 +4,25 @@ Rails.application.routes.draw do
     mount Rswag::Ui::Engine => '/'
   end
 
+  # Web Interface Routes
+  root 'murmurs#timeline'
+  
+  # Authentication routes for web interface
+  get 'login', to: 'authentication#login_form', as: :login
+  post 'login', to: 'authentication#login'
+  delete 'logout', to: 'authentication#logout', as: :logout
+  get 'signup', to: 'users#new', as: :signup
+  post 'signup', to: 'users#create'
+
+  # Web Routes
+  resources :murmurs, only: [:create, :destroy] do
+    resource :like, only: [:create, :destroy]
+  end
+  
+  get 'timeline', to: 'murmurs#timeline', as: :timeline
+  get '@:username', to: 'users#profile', as: :profile
+  resources :follows, only: [:create, :destroy]
+
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.

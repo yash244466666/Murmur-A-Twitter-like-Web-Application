@@ -1,28 +1,45 @@
 class FollowsController < ApplicationController
-  # POST /api/follows
+  # POST /follows
   def create
     @user_to_follow = User.find(params[:followed_id])
     
     if @user_to_follow.id == current_user.id
-      render json: { error: 'Cannot follow yourself' }, status: :unprocessable_entity
+      respond_to do |format|
+        format.html { redirect_back(fallback_location: root_path, alert: 'Cannot follow yourself') }
+        format.json { render json: { error: 'Cannot follow yourself' }, status: :unprocessable_entity }
+      end
       return
     end
 
     @follow = current_user.active_follows.build(followed: @user_to_follow)
 
     if @follow.save
-      render json: { message: 'Following successfully' }, status: :created
+      respond_to do |format|
+        format.html { redirect_back(fallback_location: root_path, notice: 'Successfully followed user') }
+        format.json { render json: { message: 'Following successfully' }, status: :created }
+      end
     else
-      render json: { errors: @follow.errors.full_messages }, status: :unprocessable_entity
+      respond_to do |format|
+        format.html { redirect_back(fallback_location: root_path, alert: @follow.errors.full_messages.join(', ')) }
+        format.json { render json: { errors: @follow.errors.full_messages }, status: :unprocessable_entity }
+      end
     end
   end
 
-  # DELETE /api/follows/:id
+  # DELETE /follows/:id
   def destroy
-    @follow = current_user.active_follows.find_by!(followed_id: params[:id])
+    @user_to_unfollow = User.find(params[:id])
+    @follow = current_user.active_follows.find_by!(followed: @user_to_unfollow)
     @follow.destroy
-    head :no_content
+    
+    respond_to do |format|
+      format.html { redirect_back(fallback_location: root_path, notice: 'Successfully unfollowed user') }
+      format.json { head :no_content }
+    end
   rescue ActiveRecord::RecordNotFound
-    render json: { error: 'Follow relationship not found' }, status: :not_found
+    respond_to do |format|
+      format.html { redirect_back(fallback_location: root_path, alert: 'Follow relationship not found') }
+      format.json { render json: { error: 'Follow relationship not found' }, status: :not_found }
+    end
   end
 end

@@ -16,6 +16,15 @@ class User < ApplicationRecord
   has_many :following, through: :active_follows, source: :followed
   has_many :followers, through: :passive_follows, source: :follower
 
+  # Utility methods
+  def following?(other_user)
+    following.include?(other_user)
+  end
+
+  def liked?(murmur)
+    liked_murmurs.include?(murmur)
+  end
+
   # Validations
   validates :username, presence: true, 
                       uniqueness: true, 
