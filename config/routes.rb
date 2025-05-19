@@ -1,8 +1,7 @@
 Rails.application.routes.draw do
-  scope '/api-docs' do
-    mount Rswag::Api::Engine => '/'
-    mount Rswag::Ui::Engine => '/'
-  end
+  # Mount Swagger UI for API documentation
+  mount Rswag::Api::Engine => '/api-docs'
+  mount Rswag::Ui::Engine => '/api-docs'
 
   # Web Interface Routes
   root 'murmurs#timeline'

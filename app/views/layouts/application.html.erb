@@ -23,7 +23,7 @@
           <% if current_user %>
             <%= link_to "Timeline", timeline_path, class: "text-white" %>
             <%= link_to "Profile", profile_path(username: current_user.username), class: "text-white" %>
-            <%= link_to "Sign Out", logout_path, method: :delete, class: "text-white" %>
+            <%= button_to "Sign Out", logout_path, method: :delete, class: "text-white bg-transparent border-0 cursor-pointer" %>
           <% else %>
             <%= link_to "Sign In", login_path, class: "text-white" %>
             <%= link_to "Sign Up", signup_path, class: "text-white" %>

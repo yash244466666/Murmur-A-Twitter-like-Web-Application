@@ -49,11 +49,22 @@ class MurmursController < ApplicationController
                      .per(10)
                      
     @suggested_users = User.where.not(id: following_ids + [current_user.id])
+                          .order(Arel.sql('RAND()'))
                           .limit(5)
                           
     respond_to do |format|
       format.html
-      format.json { render json: @murmurs.map { |m| murmur_with_user(m) } }
+      format.json { 
+        render json: {
+          murmurs: @murmurs.map { |m| murmur_with_user(m) },
+          suggested_users: @suggested_users.map { |u| {
+            id: u.id,
+            username: u.username,
+            bio: u.bio,
+            following: current_user.following?(u)
+          }}
+        }
+      }
     end
   end
 

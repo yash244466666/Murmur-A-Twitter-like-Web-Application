@@ -4,19 +4,31 @@ class LikesController < ApplicationController
     @murmur = Murmur.find(params[:murmur_id])
     @like = current_user.likes.build(murmur: @murmur)
 
-    if @like.save
-      render json: { message: 'Liked successfully' }, status: :created
-    else
-      render json: { errors: @like.errors.full_messages }, status: :unprocessable_entity
+    respond_to do |format|
+      if @like.save
+        format.html { redirect_back(fallback_location: root_path) }
+        format.json { render json: { message: 'Liked successfully' }, status: :created }
+      else
+        format.html { redirect_back(fallback_location: root_path, alert: @like.errors.full_messages.join(', ')) }
+        format.json { render json: { errors: @like.errors.full_messages }, status: :unprocessable_entity }
+      end
     end
   end
 
   # DELETE /api/likes/:id
   def destroy
-    @like = current_user.likes.find_by!(murmur_id: params[:id])
+    @murmur = Murmur.find(params[:murmur_id])
+    @like = current_user.likes.find_by!(murmur: @murmur)
     @like.destroy
-    head :no_content
+
+    respond_to do |format|
+      format.html { redirect_back(fallback_location: root_path) }
+      format.json { head :no_content }
+    end
   rescue ActiveRecord::RecordNotFound
-    render json: { error: 'Like not found' }, status: :not_found
+    respond_to do |format|
+      format.html { redirect_back(fallback_location: root_path, alert: 'Like not found') }
+      format.json { render json: { error: 'Like not found' }, status: :not_found }
+    end
   end
 end

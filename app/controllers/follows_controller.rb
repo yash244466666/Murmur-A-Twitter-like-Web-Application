@@ -6,6 +6,13 @@ class FollowsController < ApplicationController
     if @user_to_follow.id == current_user.id
       respond_to do |format|
         format.html { redirect_back(fallback_location: root_path, alert: 'Cannot follow yourself') }
+        format.turbo_stream { 
+          render turbo_stream: turbo_stream.replace(
+            "follow-button-#{@user_to_follow.id}", 
+            partial: 'users/follow_button', 
+            locals: { user: @user_to_follow }
+          )
+        }
         format.json { render json: { error: 'Cannot follow yourself' }, status: :unprocessable_entity }
       end
       return
@@ -16,11 +23,31 @@ class FollowsController < ApplicationController
     if @follow.save
       respond_to do |format|
         format.html { redirect_back(fallback_location: root_path, notice: 'Successfully followed user') }
+        format.turbo_stream { 
+          render turbo_stream: [
+            turbo_stream.replace(
+              "follow-button-#{@user_to_follow.id}", 
+              partial: 'users/follow_button', 
+              locals: { user: @user_to_follow }
+            ),
+            turbo_stream.update(
+              "following-count",
+              current_user.following.count.to_s
+            )
+          ]
+        }
         format.json { render json: { message: 'Following successfully' }, status: :created }
       end
     else
       respond_to do |format|
         format.html { redirect_back(fallback_location: root_path, alert: @follow.errors.full_messages.join(', ')) }
+        format.turbo_stream { 
+          render turbo_stream: turbo_stream.replace(
+            "follow-button-#{@user_to_follow.id}", 
+            partial: 'users/follow_button', 
+            locals: { user: @user_to_follow }
+          )
+        }
         format.json { render json: { errors: @follow.errors.full_messages }, status: :unprocessable_entity }
       end
     end
@@ -29,17 +56,36 @@ class FollowsController < ApplicationController
   # DELETE /follows/:id
   def destroy
     @user_to_unfollow = User.find(params[:id])
-    @follow = current_user.active_follows.find_by!(followed: @user_to_unfollow)
-    @follow.destroy
+    @follow = current_user.active_follows.find_by(followed: @user_to_unfollow)
     
-    respond_to do |format|
-      format.html { redirect_back(fallback_location: root_path, notice: 'Successfully unfollowed user') }
-      format.json { head :no_content }
-    end
-  rescue ActiveRecord::RecordNotFound
-    respond_to do |format|
-      format.html { redirect_back(fallback_location: root_path, alert: 'Follow relationship not found') }
-      format.json { render json: { error: 'Follow relationship not found' }, status: :not_found }
+    if @follow
+      @follow.destroy
+      respond_to do |format|
+        format.html { redirect_back(fallback_location: root_path, notice: 'Successfully unfollowed user') }
+        format.turbo_stream { 
+          render turbo_stream: [
+            turbo_stream.replace("follow-button-#{@user_to_unfollow.id}", 
+              partial: 'users/follow_button', 
+              locals: { user: @user_to_unfollow }
+            ),
+            turbo_stream.update("following-count",
+              current_user.following.count.to_s
+            )
+          ]
+        }
+        format.json { head :no_content }
+      end
+    else
+      respond_to do |format|
+        format.html { redirect_back(fallback_location: root_path, alert: 'Follow relationship not found') }
+        format.turbo_stream { 
+          render turbo_stream: turbo_stream.replace("follow-button-#{@user_to_unfollow.id}", 
+            partial: 'users/follow_button', 
+            locals: { user: @user_to_unfollow }
+          )
+        }
+        format.json { render json: { error: 'Follow relationship not found' }, status: :not_found }
+      end
     end
   end
 end

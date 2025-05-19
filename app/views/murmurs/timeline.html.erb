@@ -3,10 +3,26 @@
   <div class="lg:col-span-1">
     <div class="bg-white rounded-lg shadow p-6 sticky top-4">
       <h2 class="text-xl font-bold mb-4">Your Profile</h2>
-      <div class="space-y-2">
-        <p><strong>@<%= current_user.username %></strong></p>
-        <p><%= pluralize(current_user.followers.count, 'Follower') %></p>
-        <p>Following <%= current_user.following.count %></p>
+      <div class="space-y-4">
+        <div class="flex items-center space-x-3">
+          <%= user_avatar(current_user, size: 64) %>
+          <div>
+            <p class="font-bold text-lg">@<%= current_user.username %></p>
+            <% if current_user.bio.present? %>
+              <p class="text-gray-600"><%= current_user.bio %></p>
+            <% end %>
+          </div>
+        </div>
+        <div class="flex justify-between text-sm">
+          <div>
+            <p class="font-bold text-gray-900"><%= current_user.followers.count %></p>
+            <p class="text-gray-600">Followers</p>
+          </div>
+          <div>
+            <p class="font-bold text-gray-900" id="following-count"><%= current_user.following.count %></p>
+            <p class="text-gray-600">Following</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -45,28 +61,21 @@
     <div class="bg-white rounded-lg shadow p-6 sticky top-4">
       <h2 class="text-xl font-bold mb-4">Who to Follow</h2>
       <div class="space-y-4">
-        <% @suggested_users&.each do |user| %>
-          <div class="flex items-center justify-between">
-            <%= link_to profile_path(username: user.username), class: "flex items-center space-x-2" do %>
-              <div>
-                <p class="font-bold">@<%= user.username %></p>
+        <% @suggested_users&.each do |suggested_user| %>
+          <div class="flex items-center justify-between py-2" id="user-<%= suggested_user.id %>">
+            <%= link_to profile_path(username: suggested_user.username), class: "flex items-center space-x-3 flex-1 min-w-0" do %>
+              <%= user_avatar(suggested_user, size: 40) %>
+              <div class="min-w-0 flex-1">
+                <p class="font-bold text-gray-900 truncate">@<%= suggested_user.username %></p>
+                <% if suggested_user.bio.present? %>
+                  <p class="text-sm text-gray-500 truncate"><%= suggested_user.bio %></p>
+                <% end %>
               </div>
             <% end %>
             
-            <% if current_user.following?(user) %>
-              <%= button_to follow_path(id: user.id), 
-                  method: :delete,
-                  class: "bg-blue-500 text-white px-4 py-1 rounded-full hover:bg-blue-600" do %>
-                Following
-              <% end %>
-            <% else %>
-              <%= form_with url: follows_path, method: :post, class: "inline" do %>
-                <%= hidden_field_tag :followed_id, user.id %>
-                <%= button_tag "Follow", 
-                    type: "submit",
-                    class: "border border-blue-500 text-blue-500 px-4 py-1 rounded-full hover:bg-blue-50" %>
-              <% end %>
-            <% end %>
+            <div class="follow-button-container ml-2 flex-shrink-0">
+              <%= render 'users/follow_button', user: suggested_user %>
+            </div>
           </div>
         <% end %>
       </div>
