@@ -1,8 +1,8 @@
 {
-  "name": "ti",
+  "name": "Murmur: A Twitter-like Web Application",
   "version": "1.0.0",
   "main": "index.js",
-  "repository": "git@github.com:yash244466666/twitter-clone-rails.git",
+  "repository": "git@github.com:yash244466666/Murmur-A-Twitter-like-Web-Application.git",
   "author": "yash244466666 <info@yashcodes.com>",
   "license": "MIT",
   "scripts": {
