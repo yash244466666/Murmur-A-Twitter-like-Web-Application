@@ -5,6 +5,8 @@ RSpec.describe 'Follows API', type: :request, swagger_doc: 'v1/swagger.yaml' do
   let(:token) { auth_tokens_for_user(user) }
   let(:user_to_follow) { create(:user) }
   let!(:follow) { create(:follow, follower: user, followed: user_to_follow) }
+
+
   path '/api/follows' do
     post 'Follow a user' do
       tags 'Follows'

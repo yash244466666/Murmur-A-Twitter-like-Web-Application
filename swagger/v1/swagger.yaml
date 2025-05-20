@@ -512,6 +512,134 @@ paths:
                 properties:
                   error:
                     type: string
+  "/api/profile/{username}/followers":
+    get:
+      summary: List followers of a user
+      tags:
+      - Profile
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: username
+        in: path
+        description: Username of the user
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: followers found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      username:
+                        type: string
+                      email:
+                        type: string
+                      bio:
+                        type: string
+                      created_at:
+                        type: string
+                        format: date-time
+                  followers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        username:
+                          type: string
+                        bio:
+                          type: string
+                        is_following:
+                          type: boolean
+        '404':
+          description: user not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  "/api/profile/{username}/following":
+    get:
+      summary: List users followed by a user
+      tags:
+      - Profile
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: username
+        in: path
+        description: Username of the user
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: following list found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      username:
+                        type: string
+                      email:
+                        type: string
+                      bio:
+                        type: string
+                      created_at:
+                        type: string
+                        format: date-time
+                  following:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        username:
+                          type: string
+                        bio:
+                          type: string
+                        is_following:
+                          type: boolean
+        '404':
+          description: user not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
 servers:
 - url: http://localhost:3000
   description: Development server

@@ -51,7 +51,12 @@ Rails.application.routes.draw do
     
     # Timeline and profile
     get 'timeline', to: 'murmurs#timeline'
-    get 'profile/:username', to: 'users#profile'
-    get 'profile/:username/murmurs', to: 'users#murmurs'
+
+    scope 'profile/:username' do
+      get '/', to: 'users#profile', as: :user_profile
+      get '/murmurs', to: 'users#murmurs', as: :user_murmurs
+      get '/followers', to: 'users#followers', as: :user_followers
+      get '/following', to: 'users#following', as: :user_following
+    end
   end
 end

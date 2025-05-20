@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   skip_before_action :authenticate_user!, only: [:new, :create]
+  before_action :set_user, only: [:profile, :followers, :following]
   layout 'application'
 
   def new
@@ -31,7 +32,6 @@ class UsersController < ApplicationController
 
   # GET /@:username
   def profile
-    @user = User.find_by!(username: params[:username])
     @murmurs = @user.murmurs.includes(:user, :likes).order(created_at: :desc).page(params[:page]).per(10)
 
     respond_to do |format|
@@ -55,14 +55,62 @@ class UsersController < ApplicationController
         }
       end
     end
+  end
+
+  # GET /@:username/followers
+  def followers
+    @followers = @user.followers.includes(:followers, :following).page(params[:page]).per(20)
+    
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: {
+          user: UserSerializer.new(@user),
+          followers: @followers.map { |follower| 
+            {
+              id: follower.id,
+              username: follower.username,
+              bio: follower.bio,
+              is_following: current_user&.following?(follower)
+            }
+          }
+        }
+      end
+    end
+  end
+
+  # GET /@:username/following
+  def following
+    @following = @user.following.includes(:followers, :following).page(params[:page]).per(20)
+    
+    respond_to do |format|
+      format.html
+      format.json do
+        render json: {
+          user: UserSerializer.new(@user),
+          following: @following.map { |followed| 
+            {
+              id: followed.id,
+              username: followed.username,
+              bio: followed.bio,
+              is_following: current_user&.following?(followed)
+            }
+          }
+        }
+      end
+    end
+  end
+
+  private
+
+  def set_user
+    @user = User.find_by!(username: params[:username])
   rescue ActiveRecord::RecordNotFound
     respond_to do |format|
       format.html { redirect_to root_path, alert: 'User not found' }
       format.json { render json: { error: 'User not found' }, status: :not_found }
     end
   end
-
-  private
 
   def user_params
     params.permit(:username, :email, :password, :password_confirmation, :bio)
