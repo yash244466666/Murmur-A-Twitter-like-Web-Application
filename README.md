@@ -52,9 +52,9 @@ The goal was to implement a web application with the following specifications:
    - **User Authentication:** Implemented for both web (sessions) and API (JWT). (`AuthenticationController`, `JsonWebToken` lib). **(✓ Met - Optional requirement completed)**
 
 **2. Technical Stack:**
-   - **Ruby:** Project uses Ruby 3.1.2 (as per typical Rails 7 setup, confirm with `ruby -v`).
-   - **Ruby on Rails:** Project uses Rails 7.1.3.2. **(✓ Met)**
-   - **Database:** Currently uses **PostgreSQL**. The requirement was **MySQL**. This is a deviation.
+   - **Ruby:** Project uses Ruby 3.4.3.
+   - **Ruby on Rails:** Project uses Rails 8.0.2. **(✓ Met)**
+   - **Database:** Currently uses **MySQL**. The requirement was **MySQL**. This is a deviation.
    - **JavaScript Bundling (Webpack):** Uses `importmap-rails` and `jsbundling-rails` (with esbuild), which are the modern Rails standards for JavaScript management, fulfilling the intent of using a JS bundler. **(✓ Met, via modern Rails equivalents)**
    - **Tailwind CSS:** Implemented and used for styling. **(✓ Met)**
 
@@ -78,8 +78,8 @@ The goal was to implement a web application with the following specifications:
 
 ## Technologies Used in This Project
 
-- **Backend:** Ruby 3.1.2 (verify exact version), Rails 7.1.3.2
-- **Database:** PostgreSQL (Note: Requirement was MySQL)
+- **Backend:** Ruby 3.4.3, Rails 8.0.2
+- **Database:** MySQL
 - **Frontend:**
     - HTML (ERB)
     - Tailwind CSS
@@ -103,15 +103,15 @@ The goal was to implement a web application with the following specifications:
     git clone <repository-url>
     cd ti
     ```
-2.  **Install Ruby and Node.js:** Ensure you have Ruby (>= 3.1.x) and Node.js (>= 16.x) installed.
+2.  **Install Ruby and Node.js:** Ensure you have Ruby (3.4.3) and Node.js (>= 16.x) installed.
 3.  **Install dependencies:**
     ```bash
     bundle install
     yarn install # If you have package.json dependencies not managed by importmaps directly
     ```
-4.  **Database Setup (PostgreSQL):**
-    *   Ensure PostgreSQL server is running.
-    *   Create a user/role in PostgreSQL that matches your `config/database.yml` development settings (or update `database.yml`).
+4.  **Database Setup (MySQL):**
+    *   Ensure MySQL server is running.
+    *   Create a user/role in MySQL that matches your `config/database.yml` development settings (or update `database.yml`).
     *   Create the database, run migrations, and seed data:
         ```bash
         rails db:create
@@ -175,7 +175,7 @@ All API endpoints (except user registration and login) require a JWT token in th
 
 ## Deviation from Requirements
 
-- **Database:** The project currently uses PostgreSQL. The original requirement specified MySQL. This change was made based on common Rails development preferences or initial setup convenience. Migrating to MySQL would be required for strict adherence.
+- **Database:** The project currently uses MySQL, which aligns with the original requirement. (Previous versions of this README incorrectly stated PostgreSQL).
 
 ## Impressions & Potential Future Work
 
