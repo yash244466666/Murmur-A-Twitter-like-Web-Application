@@ -9,7 +9,11 @@ This project fulfills most of the core requirements outlined in the coding test 
 ## Project Demo Video
 
 A short video demonstrating the application's features can be found here:
-[Murmur App Demo](https://drive.google.com/file/d/1iJPO6gCVvxOzS0P6uRBl0QHeXPoOy8jm/view?usp=sharing)
+[Murmur App Demo](https://drive.google.com/file/d/1cYm_koJCKZnLN1qmPIPMmfH05rHXXozV/view?usp=sharing)
+
+## Application Screenshot
+
+![Murmur App Screenshot](Screenshot%20from%202025-05-20%2023-40-04.png)
 
 ## Original Requirements Summary
 
