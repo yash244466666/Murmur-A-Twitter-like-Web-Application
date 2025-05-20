@@ -54,7 +54,7 @@ The goal was to implement a web application with the following specifications:
 **2. Technical Stack:**
    - **Ruby:** Project uses Ruby 3.4.3.
    - **Ruby on Rails:** Project uses Rails 8.0.2. **(✓ Met)**
-   - **Database:** Currently uses **MySQL**. The requirement was **MySQL**. This is a deviation.
+   - **Database:** Currently uses **MySQL**. The requirement was **MySQL**. **(✓ Met)**
    - **JavaScript Bundling (Webpack):** Uses `importmap-rails` and `jsbundling-rails` (with esbuild), which are the modern Rails standards for JavaScript management, fulfilling the intent of using a JS bundler. **(✓ Met, via modern Rails equivalents)**
    - **Tailwind CSS:** Implemented and used for styling. **(✓ Met)**
 
@@ -175,7 +175,7 @@ All API endpoints (except user registration and login) require a JWT token in th
 
 ## Deviation from Requirements
 
-- **Database:** The project currently uses MySQL, which aligns with the original requirement. (Previous versions of this README incorrectly stated PostgreSQL).
+- **JavaScript Bundling (Webpack):** The original requirement specified "Webpack". This project utilizes `importmap-rails` and `jsbundling-rails` (with `esbuild`) for JavaScript management. These are modern Rails conventions that fulfill the role of a JavaScript bundler, offering an alternative to directly using Webpack, rather than a deviation in capability.
 
 ## Impressions & Potential Future Work
 
@@ -189,7 +189,6 @@ All API endpoints (except user registration and login) require a JWT token in th
     - Hashtags and mentions.
     - Richer user profiles (e.g., profile pictures, header images).
     - Admin panel.
-    - Full migration to MySQL if strictly required.
 
 ---
 *This README was last updated on May 20, 2025.*
