@@ -52,6 +52,24 @@
 
     <!-- Main Content - Murmurs -->
     <div class="lg:col-span-3">
+      <% if current_user == @user %>
+        <!-- New Murmur Form -->
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+          <%= form_with(model: Murmur.new, local: true, class: "space-y-4") do |f| %>
+            <div>
+              <%= f.text_area :content,
+                  placeholder: "What\'s happening?",
+                  class: "w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500",
+                  maxlength: 280 %>
+            </div>
+            <div class="flex justify-between items-center">
+              <span class="text-sm text-gray-500" id="char-count">280 characters remaining</span>
+              <%= f.submit "Murmur", class: "bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600" %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
       <!-- Murmurs List -->
       <div class="space-y-4">
         <%= render partial: "murmurs/murmur", collection: @user.murmurs.order(created_at: :desc) %>
