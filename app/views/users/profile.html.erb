@@ -15,12 +15,16 @@
               <div>Murmurs</div>
             </div>
             <div>
-              <div class="font-bold text-gray-900"><%= @user.followers.count %></div>
-              <div>Followers</div>
+              <%= link_to user_followers_path(username: @user.username), class: "hover:text-blue-500" do %>
+                <div class="font-bold text-gray-900"><%= @user.followers.count %></div>
+                <div>Followers</div>
+              <% end %>
             </div>
             <div>
-              <div class="font-bold text-gray-900"><%= @user.following.count %></div>
-              <div>Following</div>
+              <%= link_to user_following_path(username: @user.username), class: "hover:text-blue-500" do %>
+                <div class="font-bold text-gray-900"><%= @user.following.count %></div>
+                <div>Following</div>
+              <% end %>
             </div>
           </div>
 

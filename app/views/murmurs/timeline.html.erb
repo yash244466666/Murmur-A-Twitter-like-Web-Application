@@ -15,12 +15,16 @@
         </div>
         <div class="flex justify-between text-sm">
           <div>
-            <p class="font-bold text-gray-900"><%= current_user.followers.count %></p>
-            <p class="text-gray-600">Followers</p>
+            <%= link_to user_followers_path(username: current_user.username), class: "hover:text-blue-500" do %>
+              <p class="font-bold text-gray-900"><%= current_user.followers.count %></p>
+              <p class="text-gray-600">Followers</p>
+            <% end %>
           </div>
           <div>
-            <p class="font-bold text-gray-900" id="following-count"><%= current_user.following.count %></p>
-            <p class="text-gray-600">Following</p>
+            <%= link_to user_following_path(username: current_user.username), class: "hover:text-blue-500" do %>
+              <p class="font-bold text-gray-900" id="following-count"><%= current_user.following.count %></p>
+              <p class="text-gray-600">Following</p>
+            <% end %>
           </div>
         </div>
       </div>
