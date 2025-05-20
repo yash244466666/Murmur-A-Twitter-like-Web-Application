@@ -6,6 +6,11 @@ This project, "Murmur", is a web application similar to Twitter/X, allowing user
 
 This project fulfills most of the core requirements outlined in the coding test instructions. Key features like user authentication, posting murmurs, following/unfollowing users, liking/unliking murmurs, user profiles, and a personal timeline are implemented for both a web interface and a JSON API.
 
+## Project Demo Video
+
+A short video demonstrating the application's features can be found here:
+[Murmur App Demo](https://drive.google.com/file/d/1iJPO6gCVvxOzS0P6uRBl0QHeXPoOy8jm/view?usp=sharing)
+
 ## Original Requirements Summary
 
 The goal was to implement a web application with the following specifications:
