@@ -1,6 +1,6 @@
-# Twitter-like Web Application "ti"
+# Murmur: A Twitter-like Web Application
 
-This project is a web application similar to Twitter/X, allowing users to post "murmurs" (tweets), follow other users, and like murmurs. It has been developed as a coding test for a Ruby/Rails engineer position.
+This project, "Murmur", is a web application similar to Twitter/X, allowing users to post "murmurs" (tweets), follow other users, and like murmurs. It has been developed as a coding test for a Ruby/Rails engineer position.
 
 ## Project Status (as of May 20, 2025)
 
