@@ -145,7 +145,11 @@ The goal was to implement a web application with the following specifications:
 
 The API documentation is available through Swagger UI at `/api-docs` when running the application. Here are the key endpoints:
 
-### Authentication
+### API Documentation
+
+The API is documented using Swagger/OpenAPI. You can access the interactive documentation at `/api-docs` when running the server.
+
+### Authentication Endpoints
 
 #### Create Account
 ```http
@@ -162,20 +166,6 @@ Content-Type: application/json
 }
 ```
 
-Response:
-```json
-{
-  "token": "eyJhbGciOiJIUzI1NiJ9...",
-  "user": {
-    "id": 1,
-    "username": "johndoe",
-    "email": "john@example.com",
-    "bio": "Hello, I'm John!",
-    "created_at": "2025-05-23T01:37:54.933Z"
-  }
-}
-```
-
 #### Login
 ```http
 POST /auth/login
@@ -187,12 +177,54 @@ Content-Type: application/json
 }
 ```
 
-### Murmurs
+### Murmurs Endpoints
 
-#### Get Your Murmurs
+#### List All Murmurs
 ```http
 GET /api/murmurs
 Authorization: Bearer your-token
+```
+
+Response:
+```json
+{
+  "murmurs": [
+    {
+      "id": 1,
+      "content": "Hello world!",
+      "created_at": "2025-05-23T01:37:54.933Z",
+      "user": {
+        "id": 1,
+        "username": "johndoe",
+        "bio": "Hello, I'm John!"
+      },
+      "likes_count": 5,
+      "liked_by_current_user": false
+    }
+  ]
+}
+```
+
+#### Get Single Murmur
+```http
+GET /api/murmurs/:id
+Authorization: Bearer your-token
+```
+
+Response:
+```json
+{
+  "id": 1,
+  "content": "Hello world!",
+  "created_at": "2025-05-23T01:37:54.933Z",
+  "user": {
+    "id": 1,
+    "username": "johndoe",
+    "bio": "Hello, I'm John!"
+  },
+  "likes_count": 5,
+  "liked_by_current_user": false
+}
 ```
 
 #### Create Murmur
@@ -212,14 +244,34 @@ DELETE /api/murmurs/:id
 Authorization: Bearer your-token
 ```
 
-### Timeline
+### Timeline Endpoint
 
 ```http
 GET /api/timeline
 Authorization: Bearer your-token
 ```
 
-### Profile
+Response:
+```json
+{
+  "murmurs": [
+    {
+      "id": 1,
+      "content": "Hello world!",
+      "created_at": "2025-05-23T01:37:54.933Z",
+      "user": {
+        "id": 1,
+        "username": "johndoe",
+        "bio": "Hello, I'm John!"
+      },
+      "likes_count": 5,
+      "liked_by_current_user": false
+    }
+  ]
+}
+```
+
+### Profile Endpoints
 
 #### View Profile
 ```http
@@ -239,7 +291,7 @@ GET /api/profile/:username/following
 Authorization: Bearer your-token
 ```
 
-### Social Interactions
+### Social Interaction Endpoints
 
 #### Follow User
 ```http
