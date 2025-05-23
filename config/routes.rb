@@ -15,7 +15,7 @@ Rails.application.routes.draw do
   post 'signup', to: 'users#create' # This is also for web signup, as an alternative path
 
   # Web Routes
-  resources :murmurs, only: [:create, :destroy] do
+  resources :murmurs, only: [:create, :destroy, :show] do
     resource :like, only: [:create, :destroy]
   end
   resources :follows, only: [:create, :destroy]
@@ -43,12 +43,9 @@ Rails.application.routes.draw do
   # API routes
   scope '/api', defaults: { format: :json } do
     # Murmurs endpoints
-    get 'murmurs', to: 'murmurs#index'
-    post 'murmurs', to: 'murmurs#create'
-    delete 'murmurs/:id', to: 'murmurs#destroy'
-    get 'murmurs/:id/detail', to: 'murmurs#detail'
-    post 'murmurs/:id/like', to: 'likes#create'
-    delete 'murmurs/:id/like', to: 'likes#destroy'
+    resources :murmurs, only: [:index, :show, :create, :destroy] do
+      resource :like, only: [:create, :destroy]
+    end
 
     # Timeline
     get 'timeline', to: 'murmurs#timeline'

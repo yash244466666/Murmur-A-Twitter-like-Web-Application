@@ -96,6 +96,43 @@ RSpec.describe 'Murmurs API', type: :request, swagger_doc: 'v1/swagger.yaml' do
   end
 
   path '/api/murmurs/{id}' do
+    get 'Get murmur details' do
+      tags 'Murmurs'
+      produces 'application/json'
+      security [bearerAuth: []]
+      
+      parameter name: :id, in: :path, schema: { type: :integer }, required: true, 
+                description: 'ID of murmur to retrieve', example: 1
+
+      response '200', 'murmur found' do
+        schema type: :object,
+          properties: {
+            id: { type: :integer },
+            content: { type: :string },
+            created_at: { type: :string, format: 'date-time' },
+            user: {
+              type: :object,
+              properties: {
+                id: { type: :integer },
+                username: { type: :string },
+                bio: { type: :string }
+              }
+            },
+            likes_count: { type: :integer },
+            liked_by_current_user: { type: :boolean }
+          }
+        run_test!
+      end
+
+      response '404', 'murmur not found' do
+        schema type: :object,
+          properties: {
+            error: { type: :string }
+          }
+        run_test!
+      end
+    end
+
     delete 'Deletes a murmur' do
       tags 'Murmurs'
       produces 'application/json'

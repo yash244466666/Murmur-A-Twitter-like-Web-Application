@@ -73,6 +73,9 @@ paths:
               schema:
                 type: object
                 properties:
+                  token:
+                    type: string
+                    example: eyJhbGciOiJIUzI1NiJ9...
                   user:
                     type: object
                     properties:
@@ -94,20 +97,30 @@ paths:
               schema:
                 type: object
                 properties:
+                  error:
+                    type: string
+                    example: Validation failed
                   errors:
                     type: array
                     items:
                       type: string
+                    example:
+                    - Username has already been taken
+                    - Email is invalid
       requestBody:
         content:
           application/json:
             schema:
               type: object
-              required: ['user']
+              required:
+              - user
               properties:
                 user:
                   type: object
-                  required: ['username', 'email', 'password']
+                  required:
+                  - username
+                  - email
+                  - password
                   properties:
                     username:
                       type: string
@@ -289,13 +302,113 @@ paths:
                 properties:
                   error:
                     type: string
-  "/api/murmurs":
+  "/api/murmurs/{id}":
     get:
-      summary: Retrieves all murmurs
+      summary: Get murmur details
       tags:
       - Murmurs
       security:
       - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of murmur to retrieve
+        example: 1
+      responses:
+        '200':
+          description: murmur found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  content:
+                    type: string
+                  created_at:
+                    type: string
+                    format: date-time
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      username:
+                        type: string
+                      bio:
+                        type: string
+                  likes_count:
+                    type: integer
+                  liked_by_current_user:
+                    type: boolean
+        '404':
+          description: murmur not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+    delete:
+      summary: Deletes a murmur
+      tags:
+      - Murmurs
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of murmur to delete
+        example: 1
+      description: This error occurs when trying to delete a murmur that has already
+        been deleted or does not exist
+      responses:
+        '200':
+          description: murmur deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: Murmur deleted successfully
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: You are not authorized to perform this action
+        '404':
+          description: murmur not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                    example: Murmur has already been deleted or does not exist
+  "/api/murmurs":
+    get:
+      summary: Retrieves current user's murmurs
+      tags:
+      - Murmurs
+      security:
+      - bearerAuth: []
+      description: Returns a list of murmurs belonging to the authenticated user
       responses:
         '200':
           description: murmurs found
@@ -395,42 +508,6 @@ paths:
                   example: This is my first murmur!
               required:
               - content
-  "/api/murmurs/{id}":
-    delete:
-      summary: Deletes a murmur
-      tags:
-      - Murmurs
-      security:
-      - bearerAuth: []
-      parameters:
-      - name: id
-        in: path
-        schema:
-          type: integer
-        required: true
-        description: ID of murmur to delete
-        example: 1
-      responses:
-        '204':
-          description: murmur deleted
-        '401':
-          description: unauthorized
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
-        '404':
-          description: murmur not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  error:
-                    type: string
   "/api/timeline":
     get:
       summary: Retrieves user timeline

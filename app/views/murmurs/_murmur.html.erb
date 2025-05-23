@@ -9,11 +9,15 @@
           <%= murmur.user.username %>
         <% end %>
         <span class="text-gray-500 text-sm ml-2">
-          <%= time_ago_in_words(murmur.created_at) %> ago
+          <%= link_to murmur_path(murmur), class: "hover:underline" do %>
+            <%= time_ago_in_words(murmur.created_at) %> ago
+          <% end %>
         </span>
       </div>
       
-      <p class="text-gray-800 mb-4"><%= murmur.content %></p>
+      <%= link_to murmur_path(murmur), class: "block" do %>
+        <p class="text-gray-800 mb-4"><%= murmur.content %></p>
+      <% end %>
       
       <div class="flex items-center space-x-4">
         <div class="flex items-center">
