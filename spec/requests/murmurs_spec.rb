@@ -5,10 +5,12 @@ RSpec.describe 'Murmurs API', type: :request, swagger_doc: 'v1/swagger.yaml' do
   let(:token) { auth_tokens_for_user(user) }
   let!(:murmurs) { create_list(:murmur, 3, user: user) }
   path '/api/murmurs' do
-    get 'Retrieves all murmurs' do
+    get 'Retrieves current user\'s murmurs' do
       tags 'Murmurs'
       produces 'application/json'
       security [bearerAuth: []]
+
+      description 'Returns a list of murmurs belonging to the authenticated user'
 
       response '200', 'murmurs found' do
         schema type: :object,
@@ -88,6 +90,40 @@ RSpec.describe 'Murmurs API', type: :request, swagger_doc: 'v1/swagger.yaml' do
               items: { type: :string }
             }
           }
+        run_test!
+      end
+    end
+  end
+
+  path '/api/murmurs/{id}' do
+    delete 'Deletes a murmur' do
+      tags 'Murmurs'
+      produces 'application/json'
+      security [bearerAuth: []]
+      parameter name: :id, in: :path, schema: { type: :integer }, required: true, description: 'ID of murmur to delete', example: 1
+
+      response '200', 'murmur deleted' do
+        schema type: :object,
+          properties: {
+            message: { type: :string, example: 'Murmur deleted successfully' }
+          }
+        run_test!
+      end
+
+      response '401', 'unauthorized' do
+        schema type: :object,
+          properties: {
+            error: { type: :string, example: 'You are not authorized to perform this action' }
+          }
+        run_test!
+      end
+
+      response '404', 'murmur not found' do
+        schema type: :object,
+          properties: {
+            error: { type: :string, example: 'Murmur has already been deleted or does not exist' }
+          }
+        description 'This error occurs when trying to delete a murmur that has already been deleted or does not exist'
         run_test!
       end
     end

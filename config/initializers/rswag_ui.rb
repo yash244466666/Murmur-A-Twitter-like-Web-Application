@@ -6,6 +6,9 @@ Rswag::Ui.configure do |c|
   c.config_object = {
     docExpansion: 'none',      # Keep docs collapsed by default
     filter: true,              # Enable filtering
-    displayRequestDuration: true
+    displayRequestDuration: true,
+    deepLinking: true,
+    showExtensions: true,
+    showCommonExtensions: true
   }
 end

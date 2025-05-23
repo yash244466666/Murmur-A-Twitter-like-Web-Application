@@ -49,20 +49,31 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'v1/swagger.ya
       tags 'Authentication'
       consumes 'application/json'
       produces 'application/json'
-      parameter name: :user_params, in: :body, schema: {
-        type: :object,
-        properties: {
-          username: { type: :string, example: 'johndoe' },
-          email: { type: :string, example: 'john@example.com' },
-          password: { type: :string, example: 'password123' },
-          bio: { type: :string, example: "Hello, I'm John!" }
-        },
-        required: ['username', 'email', 'password']
-      }
+       consumes 'application/json'
+      produces 'application/json'
 
+      parameter name: :user, in: :body, schema: {
+        type: :object,
+        required: ['user'],
+        properties: {
+          user: {
+            type: :object,
+            required: ['username', 'email', 'password'],
+            properties: {
+              username: { type: :string, example: 'johndoe' },
+              email: { type: :string, example: 'john@example.com' },
+              password: { type: :string, example: 'password123' },
+              bio: { type: :string, example: "Hello, I'm John!" }
+            }
+          }
+        }
+      }
+      
       response '201', 'user created' do
+        let(:user) { { user: { username: 'johndoe', email: 'john@example.com', password: 'password123', bio: "Hello, I'm John!" } } }
         schema type: :object,
           properties: {
+            token: { type: :string, example: 'eyJhbGciOiJIUzI1NiJ9...' },
             user: {
               type: :object,
               properties: {
@@ -80,9 +91,11 @@ RSpec.describe 'Authentication API', type: :request, swagger_doc: 'v1/swagger.ya
       response '422', 'invalid request' do
         schema type: :object,
           properties: {
+            error: { type: :string, example: 'Validation failed' },
             errors: { 
               type: :array,
-              items: { type: :string }
+              items: { type: :string },
+              example: ['Username has already been taken', 'Email is invalid']
             }
           }
         run_test!

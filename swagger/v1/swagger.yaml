@@ -103,23 +103,24 @@ paths:
           application/json:
             schema:
               type: object
+              required: ['user']
               properties:
-                username:
-                  type: string
-                  example: johndoe
-                email:
-                  type: string
-                  example: john@example.com
-                password:
-                  type: string
-                  example: password123
-                bio:
-                  type: string
-                  example: Hello, I'm John!
-              required:
-              - username
-              - email
-              - password
+                user:
+                  type: object
+                  required: ['username', 'email', 'password']
+                  properties:
+                    username:
+                      type: string
+                      example: johndoe
+                    email:
+                      type: string
+                      example: john@example.com
+                    password:
+                      type: string
+                      example: password123
+                    bio:
+                      type: string
+                      example: Hello, I'm John!
   "/api/follows":
     post:
       summary: Follow a user
@@ -394,6 +395,42 @@ paths:
                   example: This is my first murmur!
               required:
               - content
+  "/api/murmurs/{id}":
+    delete:
+      summary: Deletes a murmur
+      tags:
+      - Murmurs
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of murmur to delete
+        example: 1
+      responses:
+        '204':
+          description: murmur deleted
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '404':
+          description: murmur not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
   "/api/timeline":
     get:
       summary: Retrieves user timeline

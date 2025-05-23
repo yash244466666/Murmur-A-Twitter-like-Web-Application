@@ -143,44 +143,168 @@ The goal was to implement a web application with the following specifications:
 
 ## API Documentation
 
-API documentation is generated using Rswag and is available when the application is running:
+The API documentation is available through Swagger UI at `/api-docs` when running the application. Here are the key endpoints:
 
-- **Swagger UI:** `http://localhost:3000/api-docs`
+### Authentication
 
-All API endpoints (except user registration and login) require a JWT token in the `Authorization` header:
-`Authorization: Bearer <your-jwt-token>`
+#### Create Account
+```http
+POST /users
+Content-Type: application/json
 
-### Main API Endpoints
+{
+  "user": {
+    "username": "johndoe",
+    "email": "john@example.com",
+    "password": "password123",
+    "bio": "Hello, I'm John!"
+  }
+}
+```
 
-(Refer to the `/api-docs` link for complete details, request/response examples, and models.)
+Response:
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9...",
+  "user": {
+    "id": 1,
+    "username": "johndoe",
+    "email": "john@example.com",
+    "bio": "Hello, I'm John!",
+    "created_at": "2025-05-23T01:37:54.933Z"
+  }
+}
+```
 
-**Authentication:**
-- `POST /users` - Register a new user (also used for web signup, but API returns JSON with token)
-- `POST /auth/login` - Login to get a JWT token
+#### Login
+```http
+POST /auth/login
+Content-Type: application/json
 
-**Murmurs:**
-- `GET /api/murmurs` - Get all murmurs (public feed, paginated)
-- `GET /api/murmurs/:id/detail` - Get details of a specific murmur
-- `POST /api/me/murmurs` - Create a new murmur (authenticated user)
-- `DELETE /api/me/murmurs/:id` - Delete own murmur (authenticated user)
-- `GET /api/me/murmurs` - Get murmurs posted by the authenticated user
+{
+  "email": "john@example.com",
+  "password": "password123"
+}
+```
 
-**Timeline:**
-- `GET /api/timeline` - Get the personalized timeline for the authenticated user (murmurs from followed users and own murmurs, paginated)
+### Murmurs
 
-**Follows:**
-- `POST /api/follows` - Follow a user (`{ "followed_id": ID }`)
-- `DELETE /api/follows/:id` - Unfollow a user (where `:id` is the ID of the user to unfollow)
+#### Get Your Murmurs
+```http
+GET /api/murmurs
+Authorization: Bearer your-token
+```
 
-**Likes:**
-- `POST /api/likes` - Like a murmur (`{ "murmur_id": ID }`)
-- `DELETE /api/likes/:id` - Unlike a murmur (where `:id` is the ID of the murmur to unlike)
+#### Create Murmur
+```http
+POST /api/murmurs
+Authorization: Bearer your-token
+Content-Type: application/json
 
-**User Profiles:**
-- `GET /api/profile/:username` - Get public profile information for a user.
-- `GET /api/profile/:username/murmurs` - Get murmurs for a specific user.
-- `GET /api/profile/:username/followers` - Get list of followers for a user.
-- `GET /api/profile/:username/following` - Get list of users a user is following.
+{
+  "content": "This is my first murmur!"
+}
+```
+
+#### Delete Murmur
+```http
+DELETE /api/murmurs/:id
+Authorization: Bearer your-token
+```
+
+### Timeline
+
+```http
+GET /api/timeline
+Authorization: Bearer your-token
+```
+
+### Profile
+
+#### View Profile
+```http
+GET /api/profile/:username
+Authorization: Bearer your-token
+```
+
+#### View Followers
+```http
+GET /api/profile/:username/followers
+Authorization: Bearer your-token
+```
+
+#### View Following
+```http
+GET /api/profile/:username/following
+Authorization: Bearer your-token
+```
+
+### Social Interactions
+
+#### Follow User
+```http
+POST /api/follows
+Authorization: Bearer your-token
+Content-Type: application/json
+
+{
+  "followed_id": 123
+}
+```
+
+#### Unfollow User
+```http
+DELETE /api/follows/:id
+Authorization: Bearer your-token
+```
+
+#### Like Murmur
+```http
+POST /api/likes
+Authorization: Bearer your-token
+Content-Type: application/json
+
+{
+  "murmur_id": 123
+}
+```
+
+#### Unlike Murmur
+```http
+DELETE /api/likes/:id
+Authorization: Bearer your-token
+```
+
+## Development Setup
+
+1. Clone the repository
+2. Install dependencies:
+   ```bash
+   bundle install
+   ```
+3. Setup database:
+   ```bash
+   rails db:create db:migrate db:seed
+   ```
+4. Start the development server:
+   ```bash
+   bin/dev
+   ```
+
+## Running Tests
+
+```bash
+rspec
+```
+
+## API Documentation Generation
+
+To regenerate the Swagger documentation:
+```bash
+RAILS_ENV=test rails rswag:specs:swaggerize
+```
+
+The documentation will be available at `http://localhost:3000/api-docs` when running the server.
 
 ## Deviation from Requirements
 

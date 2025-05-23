@@ -1,4 +1,7 @@
 class FollowsController < ApplicationController
+  before_action :set_format_from_accept_header
+  rescue_from ActiveRecord::RecordNotFound, with: :handle_not_found
+
   # POST /follows
   def create
     @user_to_follow = User.find(params[:followed_id])
@@ -73,19 +76,36 @@ class FollowsController < ApplicationController
             )
           ]
         }
-        format.json { head :no_content }
+        format.json { render json: { message: 'Successfully unfollowed user' }, status: :ok }
+        format.any { render json: { message: 'Successfully unfollowed user' }, status: :ok }
       end
     else
       respond_to do |format|
         format.html { redirect_back(fallback_location: root_path, alert: 'Follow relationship not found') }
         format.turbo_stream { 
-          render turbo_stream: turbo_stream.replace("follow-button-#{@user_to_unfollow.id}", 
+          render turbo_stream: turbo_stream.replace(
+            "follow-button-#{@user_to_unfollow.id}", 
             partial: 'users/follow_button', 
             locals: { user: @user_to_unfollow }
           )
         }
         format.json { render json: { error: 'Follow relationship not found' }, status: :not_found }
+        format.any { render json: { error: 'Follow relationship not found' }, status: :not_found }
       end
+    end
+  end
+
+  private
+
+  def set_format_from_accept_header
+    request.format = :json if request.headers["Accept"] == '*/*' || request.headers["Accept"] =~ /json/
+  end
+
+  def handle_not_found
+    respond_to do |format|
+      format.html { redirect_back(fallback_location: root_path, alert: 'User not found') }
+      format.json { render json: { error: 'User not found' }, status: :not_found }
+      format.any { render json: { error: 'User not found' }, status: :not_found }
     end
   end
 end

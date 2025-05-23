@@ -15,7 +15,7 @@
               <div>Murmurs</div>
             </div>
             <div>
-              <%= link_to user_followers_path(username: @user.username), class: "hover:text-blue-500" do %>
+              <%= link_to user_followers_path(@user.username), class: "hover:text-blue-500" do %>
                 <div class="font-bold text-gray-900"><%= @user.followers.count %></div>
                 <div>Followers</div>
               <% end %>

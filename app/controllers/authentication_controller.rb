@@ -11,11 +11,29 @@ class AuthenticationController < ApplicationController
   def login
     @user = User.find_by(email: params[:email])
     if @user&.authenticate(params[:password])
-      session[:user_id] = @user.id
-      redirect_to timeline_path, notice: "Signed in successfully!"
+      respond_to do |format|
+        format.html do 
+          session[:user_id] = @user.id
+          redirect_to timeline_path, notice: "Signed in successfully!"
+        end
+        format.json do
+          token = JsonWebToken.encode(user_id: @user.id)
+          render json: { 
+            token: token,
+            user: UserSerializer.new(@user)
+          }, status: :ok
+        end
+      end
     else
-      flash.now[:alert] = "Invalid email or password"
-      render :login_form, status: :unprocessable_entity
+      respond_to do |format|
+        format.html do
+          flash.now[:alert] = "Invalid email or password"
+          render :login_form, status: :unprocessable_entity
+        end
+        format.json do
+          render json: { error: "Invalid email or password" }, status: :unauthorized
+        end
+      end
     end
   end
 

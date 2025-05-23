@@ -3,7 +3,7 @@ class MurmursController < ApplicationController
   before_action :check_murmur_owner, only: [:destroy]
 
   def index
-    @murmurs = Murmur.includes(:user, :likes).order(created_at: :desc).page(params[:page]).per(10)
+    @murmurs = current_user.murmurs.includes(:user, :likes).order(created_at: :desc).page(params[:page]).per(10)
     respond_to do |format|
       format.html
       format.json { render json: @murmurs.map { |m| murmur_with_user(m) } }
@@ -36,8 +36,11 @@ class MurmursController < ApplicationController
     
     respond_to do |format|
       format.html { redirect_back(fallback_location: root_path, notice: 'Murmur was deleted.') }
-      format.json { head :no_content }
+      format.json { render json: { message: 'Murmur deleted successfully' }, status: :ok }
+      format.any { render json: { message: 'Murmur deleted successfully' }, status: :ok }
     end
+  rescue ActiveRecord::RecordNotFound
+    render json: { error: 'Murmur has already been deleted or does not exist' }, status: :not_found
   end
 
   def timeline
@@ -68,6 +71,15 @@ class MurmursController < ApplicationController
     end
   end
 
+  def my_murmurs
+    @murmurs = current_user.murmurs.includes(:likes).order(created_at: :desc).page(params[:page]).per(10)
+    
+    respond_to do |format|
+      format.html { render :index }
+      format.json { render json: @murmurs.map { |m| murmur_with_user(m) } }
+    end
+  end
+
   private
 
   def murmur_params
@@ -75,7 +87,16 @@ class MurmursController < ApplicationController
   end
 
   def set_murmur
-    @murmur = Murmur.find(params[:id])
+    @murmur = Murmur.order(created_at: :desc).find(params[:id])
+  rescue ActiveRecord::RecordNotFound
+    respond_to do |format|
+      format.html { 
+        flash[:alert] = 'Murmur has already been deleted or does not exist'
+        redirect_back(fallback_location: root_path)
+      }
+      format.json { render json: { error: 'Murmur has already been deleted or does not exist' }, status: :not_found }
+      format.any { render json: { error: 'Murmur has already been deleted or does not exist' }, status: :not_found }
+    end
   end
 
   def check_murmur_owner
