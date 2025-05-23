@@ -1,0 +1,56 @@
+<%# filepath: /home/yash/Desktop/ti/app/views/murmurs/show.html.erb %>
+<div class="container mx-auto px-4 py-8 max-w-4xl">
+  <div class="bg-white rounded-lg shadow-lg p-6">
+    <div class="flex items-start space-x-4">
+      <%= link_to profile_path(username: @murmur.user.username) do %>
+        <%= user_avatar(@murmur.user, size: 64) %>
+      <% end %>
+      <div class="flex-grow">
+        <div class="flex items-center mb-4">
+          <%= link_to profile_path(username: @murmur.user.username), class: "text-blue-500 font-bold hover:underline" do %>
+            <%= @murmur.user.username %>
+          <% end %>
+          <% if @murmur.user.bio.present? %>
+            <p class="text-gray-600 text-sm ml-4"><%= @murmur.user.bio %></p>
+          <% end %>
+        </div>
+        
+        <p class="text-gray-800 text-xl mb-4"><%= @murmur.content %></p>
+        
+        <div class="flex items-center justify-between text-sm text-gray-500">
+          <span><%= l @murmur.created_at, format: :long %></span>
+          <div class="flex items-center space-x-6">
+            <div class="flex items-center">
+              <% if current_user&.liked?(@murmur) %>
+                <%= button_to murmur_like_path(murmur_id: @murmur.id), method: :delete, class: "text-red-500 hover:text-red-700 flex items-center" do %>
+                  <i class="fas fa-heart"></i>
+                  <span class="ml-1"><%= @murmur.likes_count %></span>
+                <% end %>
+              <% else %>
+                <%= button_to murmur_like_path(murmur_id: @murmur.id), method: :post, class: "text-gray-500 hover:text-red-500 flex items-center" do %>
+                  <i class="far fa-heart"></i>
+                  <span class="ml-1"><%= @murmur.likes_count %></span>
+                <% end %>
+              <% end %>
+            </div>
+
+            <% if current_user == @murmur.user %>
+              <%= button_to murmur_path(@murmur), method: :delete, 
+                  class: "text-gray-500 hover:text-red-500",
+                  data: { turbo_confirm: "Are you sure you want to delete this murmur?" } do %>
+                <i class="far fa-trash-alt"></i>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container mx-auto px-4 mt-4 max-w-4xl">
+  <%= link_to timeline_path, class: "text-blue-500 hover:text-blue-600 flex items-center" do %>
+    <i class="fas fa-arrow-left mr-2"></i>
+    Back to Timeline
+  <% end %>
+</div>

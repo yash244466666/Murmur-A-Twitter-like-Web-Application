@@ -1,0 +1,47 @@
+<%# app/views/users/followers.html.erb %>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+  <div class="bg-white shadow rounded-lg overflow-hidden">
+    <!-- Header -->
+    <div class="p-6 border-b border-gray-200">
+      <div class="flex items-center">
+        <%= user_avatar(@user, size: 48, class: "mr-4") %>
+        <div>
+          <h1 class="text-xl font-bold">@<%= @user.username %>'s Followers</h1>
+          <p class="text-gray-500"><%= pluralize(@followers.total_count, 'follower') %></p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Followers List -->
+    <div class="divide-y divide-gray-200">
+      <% @followers.each do |follower| %>
+        <div class="p-6 flex items-center justify-between hover:bg-gray-50">
+          <div class="flex items-center flex-1 min-w-0">
+            <%= link_to profile_path(username: follower.username), class: "flex items-center space-x-3 flex-1 min-w-0" do %>
+              <%= user_avatar(follower, size: 40) %>
+              <div class="min-w-0">
+                <p class="font-bold text-gray-900 truncate">@<%= follower.username %></p>
+                <% if follower.bio.present? %>
+                  <p class="text-sm text-gray-500 truncate"><%= follower.bio %></p>
+                <% end %>
+              </div>
+            <% end %>
+          </div>
+
+          <% if current_user && current_user != follower %>
+            <div class="follow-button-container ml-4 flex-shrink-0">
+              <%= render 'users/follow_button', user: follower %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Pagination -->
+    <% if @followers.total_pages > 1 %>
+      <div class="px-6 py-4 bg-gray-50 border-t border-gray-200">
+        <%= paginate @followers %>
+      </div>
+    <% end %>
+  </div>
+</div>

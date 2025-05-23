@@ -1,0 +1,21 @@
+<%# app/views/users/_follow_button.html.erb %>
+<%= turbo_frame_tag "follow-button-#{user.id}" do %>
+  <% if current_user.following?(user) %>
+    <%= button_to follow_path(id: user.id), 
+        method: :delete,
+        class: "bg-blue-500 text-white px-4 py-1 rounded-full hover:bg-blue-600 transition-colors duration-200",
+        data: { turbo_frame: "_top" } do %>
+      Following
+    <% end %>
+  <% else %>
+    <%= form_with url: follows_path, 
+        method: :post, 
+        class: "inline",
+        data: { turbo_frame: "_top" } do %>
+      <%= hidden_field_tag :followed_id, user.id %>
+      <%= button_tag "Follow", 
+          type: "submit",
+          class: "border border-blue-500 text-blue-500 px-4 py-1 rounded-full hover:bg-blue-50 transition-colors duration-200" %>
+    <% end %>
+  <% end %>
+<% end %>
