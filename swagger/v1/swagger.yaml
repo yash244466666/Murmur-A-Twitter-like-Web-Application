@@ -1,0 +1,688 @@
+---
+openapi: 3.0.1
+info:
+  title: Twitter Clone API
+  version: v1
+  description: A Ruby on Rails API for a Twitter-like social media platform
+paths:
+  "/auth/login":
+    post:
+      summary: Authenticates user
+      tags:
+      - Authentication
+      parameters: []
+      responses:
+        '200':
+          description: user authenticated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  token:
+                    type: string
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      username:
+                        type: string
+                      email:
+                        type: string
+                      bio:
+                        type: string
+                      created_at:
+                        type: string
+                        format: date-time
+        '401':
+          description: authentication failed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  example: john@example.com
+                password:
+                  type: string
+                  example: password123
+              required:
+              - email
+              - password
+  "/users":
+    post:
+      summary: Creates a user
+      tags:
+      - Authentication
+      parameters: []
+      responses:
+        '201':
+          description: user created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      username:
+                        type: string
+                      email:
+                        type: string
+                      bio:
+                        type: string
+                      created_at:
+                        type: string
+                        format: date-time
+        '422':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: ['user']
+              properties:
+                user:
+                  type: object
+                  required: ['username', 'email', 'password']
+                  properties:
+                    username:
+                      type: string
+                      example: johndoe
+                    email:
+                      type: string
+                      example: john@example.com
+                    password:
+                      type: string
+                      example: password123
+                    bio:
+                      type: string
+                      example: Hello, I'm John!
+  "/api/follows":
+    post:
+      summary: Follow a user
+      tags:
+      - Follows
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '201':
+          description: started following user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '422':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                followed_id:
+                  type: integer
+                  example: 2
+                  description: ID of the user to follow
+              required:
+              - followed_id
+  "/api/follows/{id}":
+    delete:
+      summary: Unfollow a user
+      tags:
+      - Follows
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        description: ID of the user to unfollow
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: unfollowed successfully
+        '404':
+          description: follow relationship not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  "/api/likes":
+    post:
+      summary: Like a murmur
+      tags:
+      - Likes
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '201':
+          description: murmur liked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+        '422':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                murmur_id:
+                  type: integer
+                  example: 1
+                  description: ID of the murmur to like
+              required:
+              - murmur_id
+  "/api/likes/{id}":
+    delete:
+      summary: Unlike a murmur
+      tags:
+      - Likes
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        description: ID of the murmur to unlike
+        required: true
+        schema:
+          type: integer
+      responses:
+        '204':
+          description: unliked successfully
+        '404':
+          description: like not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  "/api/murmurs":
+    get:
+      summary: Retrieves all murmurs
+      tags:
+      - Murmurs
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: murmurs found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  murmurs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        content:
+                          type: string
+                        created_at:
+                          type: string
+                          format: date-time
+                        user:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            username:
+                              type: string
+                            bio:
+                              type: string
+                        likes_count:
+                          type: integer
+                        liked_by_current_user:
+                          type: boolean
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+    post:
+      summary: Creates a murmur
+      tags:
+      - Murmurs
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '201':
+          description: murmur created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  content:
+                    type: string
+                  created_at:
+                    type: string
+                    format: date-time
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      username:
+                        type: string
+                      bio:
+                        type: string
+                  likes_count:
+                    type: integer
+                  liked_by_current_user:
+                    type: boolean
+        '422':
+          description: invalid request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                content:
+                  type: string
+                  example: This is my first murmur!
+              required:
+              - content
+  "/api/murmurs/{id}":
+    delete:
+      summary: Deletes a murmur
+      tags:
+      - Murmurs
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: id
+        in: path
+        schema:
+          type: integer
+        required: true
+        description: ID of murmur to delete
+        example: 1
+      responses:
+        '204':
+          description: murmur deleted
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '404':
+          description: murmur not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  "/api/timeline":
+    get:
+      summary: Retrieves user timeline
+      tags:
+      - Murmurs
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: timeline retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  murmurs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        content:
+                          type: string
+                        created_at:
+                          type: string
+                          format: date-time
+                        user:
+                          type: object
+                          properties:
+                            id:
+                              type: integer
+                            username:
+                              type: string
+                            bio:
+                              type: string
+                        likes_count:
+                          type: integer
+                        liked_by_current_user:
+                          type: boolean
+  "/api/profile/{username}":
+    get:
+      summary: Get user profile
+      tags:
+      - Profile
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: username
+        in: path
+        description: Username of the profile to view
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: profile found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      username:
+                        type: string
+                      email:
+                        type: string
+                      bio:
+                        type: string
+                      created_at:
+                        type: string
+                        format: date-time
+                  murmurs_count:
+                    type: integer
+                  followers_count:
+                    type: integer
+                  following_count:
+                    type: integer
+                  is_following:
+                    type: boolean
+                  murmurs:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        content:
+                          type: string
+                        created_at:
+                          type: string
+                          format: date-time
+                        likes_count:
+                          type: integer
+                        liked_by_current_user:
+                          type: boolean
+        '404':
+          description: profile not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+        '401':
+          description: unauthorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  "/api/profile/{username}/followers":
+    get:
+      summary: List followers of a user
+      tags:
+      - Profile
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: username
+        in: path
+        description: Username of the user
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: followers found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      username:
+                        type: string
+                      email:
+                        type: string
+                      bio:
+                        type: string
+                      created_at:
+                        type: string
+                        format: date-time
+                  followers:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        username:
+                          type: string
+                        bio:
+                          type: string
+                        is_following:
+                          type: boolean
+        '404':
+          description: user not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  "/api/profile/{username}/following":
+    get:
+      summary: List users followed by a user
+      tags:
+      - Profile
+      security:
+      - bearerAuth: []
+      parameters:
+      - name: username
+        in: path
+        description: Username of the user
+        required: true
+        schema:
+          type: string
+      - name: page
+        in: query
+        required: false
+        description: Page number
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: following list found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  user:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                      username:
+                        type: string
+                      email:
+                        type: string
+                      bio:
+                        type: string
+                      created_at:
+                        type: string
+                        format: date-time
+                  following:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        id:
+                          type: integer
+                        username:
+                          type: string
+                        bio:
+                          type: string
+                        is_following:
+                          type: boolean
+        '404':
+          description: user not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+servers:
+- url: http://localhost:3000
+  description: Development server
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

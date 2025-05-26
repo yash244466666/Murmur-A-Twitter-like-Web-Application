@@ -1,0 +1,25 @@
+{
+  "name": "Murmur: A Twitter-like Web Application",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:yash244466666/Murmur-A-Twitter-like-Web-Application.git",
+  "author": "yash244466666 <info@yashcodes.com>",
+  "license": "MIT",
+  "scripts": {
+    "build": "esbuild app/javascript/*.* --bundle --sourcemap --outdir=app/assets/builds --public-path=assets --loader:.js=jsx",
+    "build:css": "tailwindcss -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --minify",
+    "watch:css": "tailwindcss -i ./app/assets/stylesheets/application.tailwind.css -o ./app/assets/builds/application.css --watch",
+    "dev": "yarn build --watch"
+  },
+  "dependencies": {
+    "@hotwired/stimulus": "^3.2.2",
+    "@hotwired/turbo-rails": "^8.0.13",
+    "noty": "^3.2.0-beta-deprecated"
+  },
+  "devDependencies": {
+    "autoprefixer": "^10.4.21",
+    "esbuild": "^0.25.4",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.7"
+  }
+}

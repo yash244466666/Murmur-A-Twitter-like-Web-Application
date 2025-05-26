@@ -1,0 +1,102 @@
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+  <!-- Left Sidebar -->
+  <div class="lg:col-span-1">
+    <div class="bg-white rounded-lg shadow p-6 sticky top-4">
+      <h2 class="text-xl font-bold mb-4">Your Profile</h2>
+      <div class="space-y-4">
+        <div class="flex items-center space-x-3">
+          <%= user_avatar(current_user, size: 64) %>
+          <div>
+            <p class="font-bold text-lg">@<%= current_user.username %></p>
+            <% if current_user.bio.present? %>
+              <p class="text-gray-600"><%= current_user.bio %></p>
+            <% end %>
+          </div>
+        </div>
+        <div class="flex justify-between text-sm">
+          <div>
+            <%= link_to user_followers_path(username: current_user.username), class: "hover:text-blue-500" do %>
+              <p class="font-bold text-gray-900"><%= current_user.followers.count %></p>
+              <p class="text-gray-600">Followers</p>
+            <% end %>
+          </div>
+          <div>
+            <%= link_to user_following_path(username: current_user.username), class: "hover:text-blue-500" do %>
+              <p class="font-bold text-gray-900" id="following-count"><%= current_user.following.count %></p>
+              <p class="text-gray-600">Following</p>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <div class="lg:col-span-2">
+    <!-- New Murmur Form -->
+    <div class="bg-white rounded-lg shadow p-6 mb-6">
+      <%= form_with(model: Murmur.new, local: true, class: "space-y-4") do |f| %>
+        <div>
+          <%= f.text_area :content, 
+              placeholder: "What's happening?",
+              class: "w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500",
+              maxlength: 280 %>
+        </div>
+        <div class="flex justify-between items-center">
+          <span class="text-sm text-gray-500" id="char-count">280 characters remaining</span>
+          <%= f.submit "Murmur", class: "bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600" %>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Timeline -->
+    <div id="timeline" class="space-y-4">
+      <%= render partial: "murmurs/murmur", collection: @murmurs %>
+    </div>
+
+    <!-- Pagination -->
+    <div class="mt-4">
+      <%= paginate @murmurs %>
+    </div>
+  </div>
+
+  <!-- Right Sidebar -->
+  <div class="lg:col-span-1">
+    <div class="bg-white rounded-lg shadow p-6 sticky top-4">
+      <h2 class="text-xl font-bold mb-4">Who to Follow</h2>
+      <div class="space-y-4">
+        <% @suggested_users&.each do |suggested_user| %>
+          <div class="flex items-center justify-between py-2" id="user-<%= suggested_user.id %>">
+            <%= link_to profile_path(username: suggested_user.username), class: "flex items-center space-x-3 flex-1 min-w-0" do %>
+              <%= user_avatar(suggested_user, size: 40) %>
+              <div class="min-w-0 flex-1">
+                <p class="font-bold text-gray-900 truncate">@<%= suggested_user.username %></p>
+                <% if suggested_user.bio.present? %>
+                  <p class="text-sm text-gray-500 truncate"><%= suggested_user.bio %></p>
+                <% end %>
+              </div>
+            <% end %>
+            
+            <div class="follow-button-container ml-2 flex-shrink-0">
+              <%= render 'users/follow_button', user: suggested_user %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% content_for :page_scripts do %>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const textarea = document.querySelector('textarea[name="murmur[content]"]');
+      const charCount = document.querySelector('#char-count');
+      
+      textarea.addEventListener('input', function() {
+        const remaining = 280 - this.value.length;
+        charCount.textContent = `${remaining} characters remaining`;
+      });
+    });
+  </script>
+<% end %>

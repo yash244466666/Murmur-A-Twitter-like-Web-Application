@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Twitter Clone</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+    
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", type: "module" %>
+    
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
+  </head>
+
+  <body class="bg-gray-100">
+    <nav class="bg-blue-500 shadow-lg fixed top-0 left-0 right-0 z-50">
+      <div class="container mx-auto flex justify-between items-center px-4 py-3">
+        <%= link_to root_path, class: "text-white text-2xl font-bold hover:text-blue-100 transition duration-150 inline-flex items-center" do %>
+          <i class="fas fa-share-alt w-8 text-center text-2xl"></i>
+          <span class="relative top-px">Murmur</span>
+        <% end %>
+        <div class="flex items-center gap-2">
+          <% if current_user %>
+            <%= link_to timeline_path, class: "text-white hover:bg-blue-600 px-4 py-2 rounded-lg inline-flex items-center" do %>
+              <i class="fas fa-home w-5 text-center"></i>
+              <span class="ml-2">Timeline</span>
+            <% end %>
+            <%= link_to profile_path(username: current_user.username), class: "text-white hover:bg-blue-600 px-4 py-2 rounded-lg inline-flex items-center" do %>
+              <i class="fas fa-user w-5 text-center"></i>
+              <span class="ml-2">Profile</span>
+            <% end %>
+            <%= button_to logout_path, method: :delete, class: "text-white hover:bg-blue-600 px-4 py-2 rounded-lg inline-flex items-center bg-transparent border-0" do %>
+              <i class="fas fa-sign-out-alt w-5 text-center"></i>
+              <span class="ml-2">Sign Out</span>
+            <% end %>
+          <% else %>
+            <%= link_to login_path, class: "text-white hover:bg-blue-600 px-4 py-2 rounded-lg inline-flex items-center" do %>
+              <i class="fas fa-sign-in-alt w-5 text-center"></i>
+              <span class="ml-2">Sign In</span>
+            <% end %>
+            <%= link_to signup_path, class: "text-white hover:bg-blue-600 px-4 py-2 rounded-lg inline-flex items-center" do %>
+              <i class="fas fa-user-plus w-5 text-center"></i>
+              <span class="ml-2">Sign Up</span>
+            <% end %>
+          <% end %>
+        </div>
+      </div>
+    </nav>      <div id="notifications" class="fixed top-20 right-4 z-50 w-96 pointer-events-none">
+        <% if notice %>
+          <div data-controller="notification" 
+               data-notification-autohide-value="true"
+               class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg mb-4 flex justify-between items-center overflow-hidden pointer-events-auto">
+            <div class="flex items-center">
+              <i class="fas fa-check-circle mr-2"></i>
+              <div><%= notice %></div>
+            </div>
+            <button data-action="notification#close" class="text-green-700 hover:text-green-900 focus:outline-none ml-4 flex-shrink-0">
+              <i class="fas fa-times"></i>
+              <span class="sr-only">Close</span>
+            </button>
+          </div>
+        <% end %>
+        
+        <% if alert %>
+          <div data-controller="notification"
+               data-notification-autohide-value="true"
+               class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg mb-4 flex justify-between items-center overflow-hidden pointer-events-auto">
+            <div class="flex items-center">
+              <i class="fas fa-exclamation-circle mr-2"></i>
+              <div><%= alert %></div>
+            </div>
+            <button data-action="notification#close" class="text-red-700 hover:text-red-900 focus:outline-none ml-4 flex-shrink-0">
+              <i class="fas fa-times"></i>
+              <span class="sr-only">Close</span>
+            </button>
+          </div>
+        <% end %>
+    </div>
+
+    <main class="container mx-auto mt-4 px-4">
+      <%= yield %>
+    </main>
+  </body>
+</html>
